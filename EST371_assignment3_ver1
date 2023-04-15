@@ -1,0 +1,284 @@
+## EST 371
+## Spring 2021
+## Prof. Sira Maliphol
+## EST371assignment3_Jang_Heo.R
+## Student name(s): Jang Heo
+##
+install.packages("gapminder")
+library(dplyr)
+library(gapminder)
+library(tidyverse)
+library(scales)
+
+# Q1 What is the description of the dataset? What are the datasets that come in the gapminder package? 
+
+head(gapminder)
+?gapminder
+# The description of the dataset shows the overview of the function or package.
+# It stores metadata about the package or function.
+# In gapminder package, datasets such as "Life expectancy", "GDP per capita" and "population by country" comes in.
+
+# Q2 What is the difference between gapminder and gapminder_unfiltered? How many rows are filtered out?
+
+?gapminder_unfiltered
+# was not filtered on year or complete data and has 3,313 rows.
+?gapminder
+# has 1,704 rows.
+# so 1,609 rows are filtered out.
+
+# Q3 What are the column names of the gapminder dataset? What information is given in the summary statistics? Hint: summary()
+
+colnames(gapminder)
+# column names of the gapminder dataset are
+# "country"   "continent" "year"      "lifeExp"   "pop"       "gdpPercap"
+summary(gapminder)
+# summary statistics shows each column's overview. 
+# for country, it shows the number of each country's rows.
+# for continent, it shows the number of each continent's rows.
+# for year, lifeExp, pop and gdpPercap, it shows Minimum, 1st quartile, Median, Mean, 3rd quartile and Maximum.
+
+# Q4 Some of the countries that are filtered out are "Russia", "Ukraine" and "Belarus".  Why might they have been excluded?
+
+x = gapminder_unfiltered %>%
+  filter(
+    country %in% c("Russia","Ukraine", "Belarus")
+  )
+
+print(x, n = 58)
+# Probably, the data from Russia, Ukraine and Belarus was filtered out because of those data's clarity and 
+# reliability.
+
+# Q5 What are the distributions of these variables in 1972 & 2007?  Plot the histogram for each variable & year. 
+#    (Decide whether bins/binwidth in parentheses is more appropriate.)
+# Q5.1 pop (10)
+
+?geom_histogram
+x = gapminder %>% filter(year == 1972)
+print(x$pop)
+# bin(bars) : represents one interval of data.
+# Smaller intervals means more bins are used in the graph, while larger intervals means less bins are used.
+# binwidths(unit) : if binwidths = 5, it means the unit of bar is 5.
+
+#population distribution in 1972, 2007 with bins = 10
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 bins = 10,
+  )
+
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 bins = 10,
+  )
+
+#population distribution in 1972, 2007 with bins = 1000
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 bins = 1000,
+  )
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 bins = 1000,
+  )
+
+#using 'binwidth': "The number of histogram bins must be less than 1,000,000.
+#ℹ Did you make `binwidth` too small? "
+
+# Answer : using bins with 10 would be better than using binwidth = 10.
+
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 binwidth = 10,
+  )
+
+# Since distribution of population varies, rather using "bins = 10" than
+# "bins = 1000" would be more informative to distinguish distribution of population by countries.
+# because the histogram will express the distribution more delicately.
+# However, there is gap between high populated country verses normal country,
+# it would be better to divide the chart under 1.5e+08 and over 1.5e+08.
+
+gapminder %>%
+  filter(year == 1972, pop < 1.5e+08) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(pop),
+                 binwidth = 1000000,
+  )
+
+# Q5.2 lifeExp (5)
+
+#using bins = 5
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(lifeExp),
+                 bins = 5,
+  )
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(lifeExp),
+                 bins = 5,
+  )
+
+#using binwidth = 5
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(lifeExp),
+                 binwidth = 5,
+  )
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(lifeExp),
+                 binwidth = 5,
+  )
+
+# Answer : using binwidth = 5 is more appropriate than using bins = 5
+# because it shows distribution of lifeExp more delicately.
+
+# Q5.3 gdpPercap (10)
+
+#using bins = 10
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(gdpPercap),
+                 bins = 10,
+  )
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(gdpPercap),
+                 bins = 10,
+  )
+
+#using binwidth = 10
+gapminder %>%
+  filter(year == 1972) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(gdpPercap),
+                 binwidth = 10,
+  )
+
+gapminder %>%
+  filter(year == 2007) %>%
+  ggplot() +
+  geom_histogram(mapping = aes(gdpPercap),
+                 binwidth = 10,
+  )
+
+# Answer : using bins = 10 is more appropriate than using binwidth = 10
+# because using binwidth = 10 show too delicate histogram which is not visually interpretative. 
+
+
+# Q5.4 Generate boxplots for the same 3 variables in the same years
+
+# Q5.4.1 pop 
+
+gapminder %>%
+  filter(year == 1972 | year == 2007) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y=pop, x= 1972 | 2007, fill=as.factor(year))
+  )
+
+# Q.5.4.2 lifeExp (5)
+
+gapminder %>%
+  filter(year == 1972 | year == 2007) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y=lifeExp, x= 1972 | 2007, fill=as.factor(year))
+  )
+
+
+# Q5.4.3 gdpPercap (10)
+
+gapminder %>%
+  filter(year == 1972 | year == 2007) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y=gdpPercap, x= 1972 | 2007, fill=as.factor(year))
+  )
+
+# Q5.4.4 How do the histograms and boxplots visualize the data? Be brief.
+
+# histograms visualize the data by showing the bin's distribution by certain bin width. (good to see the distribution)
+# boxplots shows the middle two quartiles in the box and shows median value.(good to see core 50% and median)
+
+# Q5.4.5 The boxplots for population and GDP per capita are difficult to read. How might you add variables to the 1972 
+#        & 2007 dataframes to make the boxplots more easily understood?
+
+gapminder %>%
+  filter(year == 1972 | year == 2007) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y= log10(pop), x= 1972 | 2007, fill=as.factor(year))
+  )
+# by changing 'y = pop' to 'y = log10(pop), it is more readable.
+
+gapminder %>%
+  filter(year == 1972 | year == 2007) %>%
+  ggplot() +
+  geom_boxplot(mapping = aes(y=log10(gdpPercap), x= 1972 | 2007, fill=as.factor(year))
+  )
+
+# Q6 It will be useful to understand the gapminder dataset by groups. Create three data frames that group the dataset
+
+# Q6.1 by country
+
+
+# Q6.2 by continent
+
+
+# Q6.3 by year
+
+
+
+# Q7 Groups
+# Q7.1 Create a data frame with the following variables defined. Average population, average life expectancy, average GDP per capita grouped by continent. 
+#    Hint: use mean()
+
+# Q7.2 Sum of population by continent
+
+# Q7.3 Create a bar chart from the same
+
+
+
+# Q8 Calculate the average growth rates in percentages for the following.
+# Q8.1 Average population growth rate of each country from 1952-2007. Hint: use lag() to create new values, rate is a percentage
+
+
+# Q8.2 Which country had the highest population growth in 1952-2007? Hint: use max()
+
+
+# Q8.3 Which country had the lowest GDP per capita growth in 1952-2007? Hint: use min()
+
+
+# Q9 Graph the following
+# Q9.1 Scatterplot of average GDP growth vs average population growth
+
+
+# Q9.2 Smooth line graph overlayed on 9.1.
+
+
+# Q9.3 Line graph of GDP per capita by year for the following countries (hint: ?geom_line):
+# Q9.3.1 South Korea
+
+# Q9.3.2 ASEAN countries (Search online to identify the 10 countries)
+
+# Q9.3.3 At least 5 African countries
+
+# Q9.3.4 Plot the graph for Q9.3.3 with log values
+
